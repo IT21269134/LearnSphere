@@ -4,6 +4,10 @@
 # # LearnSphere 
 
 # ### import libraries
+
+# In[14]:
+
+
 import streamlit as st
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -19,6 +23,9 @@ from dotenv import load_dotenv
 
 
 # ### coding strats here 
+
+# In[ ]:
+
 
 # GOOGLE_API_KEY="AIzaSyBWlwRXCKq4YxK2CPPoxNvUoZKIGzu5ANo"
 load_dotenv()
