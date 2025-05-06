@@ -92,24 +92,33 @@ def user_input(user_question):
 
 # frontend main function
 def main():
-    st.set_page_config("Chat PDF")
-    st.header("Chat with PDF using Gemini💁")
+    st.set_page_config(page_title="LearnSphere App", layout="wide")
 
-    user_question = st.text_input("Ask a Question from the PDF Files")
+    # Header Section
+    st.markdown("<h1 style='text-align: center; color: #4B8BBE;'>📚 LearnSphere</h1>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center; color: #666;'>Empowering Knowledge Through Conversational PDFs 🚀</h4>", unsafe_allow_html=True)
+    st.write("---")
 
-    if user_question:
-        user_input(user_question)
+    # Two-column layout
+    col1, col2 = st.columns([2, 1])
 
-    with st.sidebar:
-        st.title("Menu:")
-        pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
-        if st.button("Submit & Process"):
-            with st.spinner("Processing..."):
-                raw_text = get_pdf_text(pdf_docs)
-                text_chunks = get_text_chunks(raw_text)
-                get_vector_store(text_chunks)
-                st.success("Done")
+    with col1:
+        user_question = st.text_input("🔍 Ask something from your uploaded PDFs:")
+        if user_question:
+            user_input(user_question)
 
+    with col2:
+        with st.sidebar:
+            st.markdown("### 📥 Upload & Process")
+            pdf_docs = st.file_uploader(
+                "Upload one or more PDF files", accept_multiple_files=True, type=["pdf"]
+            )
+            if st.button("📤 Submit & Process"):
+                with st.spinner("🔄 Processing your documents..."):
+                    raw_text = get_pdf_text(pdf_docs)
+                    text_chunks = get_text_chunks(raw_text)
+                    get_vector_store(text_chunks)
+                    st.success("✅ Done! Ready to chat.")
 
 if __name__ == "__main__":
     main()
