@@ -1,0 +1,5 @@
+1. conver jupyter to python
+jupyter nbconvert --to script app.ipynb
+
+2. Run the application 
+streamlit run app.py

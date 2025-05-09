@@ -27,7 +27,6 @@ from dotenv import load_dotenv
 # In[ ]:
 
 
-# GOOGLE_API_KEY="AIzaSyBWlwRXCKq4YxK2CPPoxNvUoZKIGzu5ANo"
 load_dotenv()
 os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -54,24 +53,14 @@ def get_vector_store(text_chunks):
     vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
-#
-def get_conversational_chain(detail_level):
-    if detail_level == "Brief Summary":
-        prompt_template = """
-        Provide a brief and concise answer to the question from the given context.
-        If the answer is not in the context, respond with: 'Answer is not available in the context.'
+#conversational chain
+def get_conversational_chain():
+    prompt_template = """
+        Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
+        provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
+        Context:\n {context}?\n
+        Question: \n{question}\n
 
-        Context:\n {context}\n
-        Question:\n{question}\n
-        Answer:
-        """
-    else:
-        prompt_template = """
-        Answer the question as detailed as possible from the provided context. 
-        If the answer is not in the context, respond with: 'Answer is not available in the context.'
-
-        Context:\n {context}\n
-        Question:\n{question}\n
         Answer:
         """
     model = ChatGoogleGenerativeAI(model="gemini-1.5-flash",temperature=0.3)
@@ -81,19 +70,16 @@ def get_conversational_chain(detail_level):
 
 
 # get user inputs
-def user_input(user_question, detail_level):
+def user_input(user_question):
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
 
     # new_db = FAISS.load_local("faiss_index", embeddings)
     new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question)
-    chain = get_conversational_chain(detail_level)
+    chain = get_conversational_chain()
 
     response = chain({"input_documents":docs, "question": user_question}, return_only_outputs=True)
     st.write("### 💬Reply:",response["output_text"])
-    # st.markdown("#### 📄 Relevant Content")
-    # for doc in docs:
-    #     st.markdown(f"<div style='background-color:#f0f2f6;padding:10px;border-radius:10px;margin-bottom:10px'>{doc.page_content}</div>", unsafe_allow_html=True)
 
 
 # frontend main function
@@ -117,10 +103,9 @@ def main():
             """)
 
             user_question = st.text_input("🔍 Ask something from your uploaded PDFs:")
-            detail_level = st.selectbox("Response Detail Level", ["Brief Summary", "Detailed Explanation"])
-
             if user_question:
-                user_input(user_question, detail_level)
+                user_input(user_question)
+
     with col2:
         with st.sidebar:
             st.markdown("### 📥 Upload & Process")
