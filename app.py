@@ -79,7 +79,7 @@ def user_input(user_question):
     chain = get_conversational_chain()
 
     response = chain({"input_documents":docs, "question": user_question}, return_only_outputs=True)
-    st.write("### 💬Reply:",response["output_text"])
+    st.write("💬Reply:",response["output_text"])
 
 
 # frontend main function
